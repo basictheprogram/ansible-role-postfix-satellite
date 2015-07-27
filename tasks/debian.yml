@@ -1,8 +1,8 @@
 ---
-# tasks file for roles/postfix-satellite/tasks/debian.yml
+# tasks file for roles/postfix-satellite
     
 - name: install postfix (apt)
-  sudo: yes
   apt: name=postfix state=present
+  sudo: yes
   tags: postfix
       

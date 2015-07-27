@@ -1,2 +1,22 @@
 ---
 # handlers file for roles/postfix-satellite
+
+- name: restart postfix
+  service: >
+      name=postfix
+      state=restarted
+  sudo: yes
+  tags: postfix
+
+- name: reload postfix
+  service: >
+      name=postfix
+      state=reloaded
+  sudo: yes
+  tags: postfix
+    
+- name: newaliases
+  command: newaliases
+  sudo: yes
+  tags: postfix
+

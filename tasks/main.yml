@@ -1,30 +1,29 @@
 ---
 # tasks file for roles/postfix-satellite
 
-- include: redhat.yml
-  when: ansible_os_family == 'RedHat'
 - include: debian.yml
   when: ansible_os_family == 'Debian'
-
-# Postfix plays
+#- include: redhat.yml
+#  when: ansible_os_family == 'RedHat'
+  
 - name: install postfix config
+  template: >
+      src=postfix_main_cf.j2
+      dest=/etc/postfix/main.cf
+      owner=root
+      group=root
+      mode=0644
   sudo: yes
-  template:
-    src: "postfix_main_cf.j2"
-    dest: "/etc/postfix/main.cf"
-    owner: "root"
-    group: "root"
-    mode: "0644"
-  notify: [ 'reload postfix' ]
+  notify: [ 'restart postfix' ]
   tags: postfix
 
 - name: configure aliases database
+  template: >
+      src=aliases.j2
+      dest=/etc/aliases
+      owner=root
+      group=root
+      mode=0644
   sudo: yes
-  template:
-    src: 'aliases.j2'
-    dest: '/etc/aliases'
-    owner: 'root'
-    group: 'root'
-    mode: '0644'
   notify: newaliases
   tags: postfix
