@@ -13,7 +13,6 @@
       owner=root
       group=root
       mode=0644
-  sudo: yes
   notify: [ 'restart postfix' ]
   tags: postfix
 
@@ -24,6 +23,5 @@
       owner=root
       group=root
       mode=0644
-  sudo: yes
   notify: newaliases
   tags: postfix

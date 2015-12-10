@@ -3,6 +3,5 @@
     
 - name: install postfix (apt)
   apt: name=postfix state=present
-  sudo: yes
   tags: postfix
       
