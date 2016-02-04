@@ -2,7 +2,7 @@
 # tasks file for roles/postfix-satellite/tasks/redhat.yml
 
 - name: install postfix packages (yum)
-  sudo: yes
+  become: yes
   yum: name=postfix state=present
   tags: postfix
     
