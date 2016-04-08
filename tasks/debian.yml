@@ -2,6 +2,8 @@
 # tasks file for roles/postfix-satellite
     
 - name: install postfix (apt)
-  apt: name=postfix state=present
+  apt: >
+      name="postfix" 
+      state="present"
   tags: postfix
-      
+

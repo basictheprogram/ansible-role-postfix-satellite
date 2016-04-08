@@ -6,7 +6,7 @@
 #- include: redhat.yml
 #  when: ansible_os_family == 'RedHat'
   
-- name: install postfix config
+- name: install postfix config from template
   template: >
       src=postfix_main_cf.j2
       dest=/etc/postfix/main.cf
