@@ -1,9 +1,9 @@
 ---
-# tasks file for roles/postfix-satellite
+# tasks file for postfix-satellite/debian.yml
     
 - name: install postfix (apt)
   apt: >
       name="postfix" 
-      state="present"
+      state="latest"
   tags: postfix
 
