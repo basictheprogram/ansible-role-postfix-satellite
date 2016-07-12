@@ -2,8 +2,10 @@
 # tasks file for postfix-satellite/debian.yml
     
 - name: install postfix (apt)
-  apt: >
-      name="postfix" 
-      state="latest"
+  apt:
+      name: "{{ item }}" 
+      state: "latest"
+  with_items:
+    - postfix
   tags: postfix
-
+  

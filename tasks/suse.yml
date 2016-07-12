@@ -2,9 +2,9 @@
 # tasks file for postfix-satellite/suse.yml
 
 - name: install postfix (zypper)
-  zypper: >
-      name="{{ item }}"
-      state="latest"
+  zypper:
+      name: "{{ item }}"
+      state: "latest"
   with_items:
       - postfix
       - mailx
