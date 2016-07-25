@@ -3,8 +3,8 @@
     
 - name: install postfix (apt)
   apt:
-      name: "{{ item }}" 
-      state: "latest"
+	  name: "{{ item }}" 
+	  state: "latest"
   with_items:
     - postfix
   tags: postfix
