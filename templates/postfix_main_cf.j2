@@ -1,12 +1,8 @@
 smtpd_banner = $myhostname ESMTP $mail_name 
 biff = no
-
-# appending .domain is the MUA's job.
 append_dot_mydomain = no
-
 readme_directory = no
 
-smtpd_relay_restrictions = permit_mynetworks permit_sasl_authenticated defer_unauth_destination
 myhostname = {{ postfix_myhostname }}
 alias_maps = hash:/etc/aliases
 alias_database = hash:/etc/aliases
