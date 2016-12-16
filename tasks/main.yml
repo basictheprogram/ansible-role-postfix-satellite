@@ -17,7 +17,7 @@
     mode: "0644"
   notify:
     - restart postfix
-  tags: postfix
+  tags: postfix-satellite
 
 - name: configure aliases database
   template:
@@ -28,4 +28,4 @@
     mode: "0644"
   notify: 
     - newaliases
-  tags: postfix
+  tags: postfix-satellite

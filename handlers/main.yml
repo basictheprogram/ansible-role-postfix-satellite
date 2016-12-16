@@ -2,18 +2,17 @@
 # handlers file for roles/postfix-satellite
 
 - name: restart postfix
-  service: >
-      name="postfix"
-      state="restarted"
-  tags: postfix
+  service:
+    name: "postfix"
+    state: restarted"
+  tags: postfix-satellite
 
 - name: reload postfix
-  service: >
-      name="postfix"
-      state="reloaded"
-  tags: postfix
+  service:
+    name: "postfix"
+    state: "reloaded"
+  tags: postfix-satellite
     
 - name: newaliases
   command: "/usr/bin/newaliases"
-  tags: postfix
-
+  tags: postfix-satellite
