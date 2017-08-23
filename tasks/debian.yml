@@ -4,7 +4,8 @@
 - name: install postfix (apt)
   apt:
     name: "{{ item }}"
-    state: "latest"
+    state: latest
+    install_recommends: no
   with_items:
     - "postfix"
   tags: postfix-satellite
