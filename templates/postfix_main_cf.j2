@@ -15,6 +15,12 @@ recipient_delimiter = +
 inet_interfaces = loopback-only
 inet_protocols = {{ postfix_inet_protocols | default("all") }}
 compatibility_level = {{ postfix_compatibility_level | default("0") }}
+{% if postfix_lmtp_host_lookup is defined %}
+lmtp_host_lookup = native
+{% endif %}
+{% if postfix_smtp_host_lookup is defined %}
+smtp_host_lookup = native
+{% endif %}
 
 {% if ansible_os_family == "Suse" %}
 # suse specific parameter
