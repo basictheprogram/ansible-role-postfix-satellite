@@ -3,8 +3,7 @@
     
 - name: install postfix (apt)
   apt:
-    name: "{{ satellite_packages }}"
+    name: "{{ postfix_satellite_packages }}"
     state: latest
-    install_recommends: no
   tags: postfix-satellite
   
