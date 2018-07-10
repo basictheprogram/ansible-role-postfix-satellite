@@ -1,14 +1,21 @@
 ---
 # tasks file for postfix-satellite/main.yml
 
+- name: gather os specific variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution_release }}.yml"
+    - "{{ ansible_distribution }}.yml"
+  tags: postfix-satellite
+
 - import_tasks: debian.yml
   when: ansible_os_family == 'Debian'
 
 - import_tasks: suse.yml
   when: ansible_os_family == 'Suse' or ansible_os_family == 'openSUSE'
 
-#- include: redhat.yml
-#  when: ansible_os_family == 'RedHat'
+- import_tasks: redhat.yml
+  when: ansible_os_family == 'RedHat'
   
 - name: install postfix config from template
   template:

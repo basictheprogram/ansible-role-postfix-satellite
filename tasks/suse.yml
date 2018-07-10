@@ -3,9 +3,6 @@
 
 - name: install postfix (zypper)
   zypper:
-    name: "{{ item }}"
+    name: "{{ satellite_packages }}"
     state: "latest"
-  with_items:
-    - "postfix"
-    - "mailx"
   tags: postfix
