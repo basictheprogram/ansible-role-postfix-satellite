@@ -7,7 +7,11 @@ myhostname = {{ postfix_myhostname }}
 alias_maps = hash:/etc/aliases
 alias_database = hash:/etc/aliases
 myorigin = {{ postfix_myorigin }}
+{% if postfix_mydestination is defined %}
+mydestination = {{ postfix_mydestination }}
+{% else %}
 mydestination = {{ postfix_myhostname }}, localhost
+{% endif %}
 {% if postfix_relayhost is defined  %}
 relayhost = [{{ postfix_relayhost | default("") }}]
 {% else %}
