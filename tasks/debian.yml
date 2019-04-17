@@ -4,6 +4,8 @@
 - name: install postfix (apt)
   apt:
     name: "{{ postfix_satellite_packages }}"
+    install_recommends: no
+    force_apt_get: yes
     state: latest
   tags: postfix-satellite
   
