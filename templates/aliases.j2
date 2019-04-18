@@ -1,4 +1,5 @@
 # See man 5 aliases for format
-postmaster:     root
+postmaster:     {{ postfix_admin_email }}
+daemon:         {{ postfix_admin_email }}
 root:           {{ postfix_admin_email }}
 
