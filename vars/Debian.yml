@@ -3,3 +3,9 @@
 
 postfix_satellite_packages:
   - postfix
+
+sasl_passwd: "/etc/postfix/sasl_passwd"
+
+sasl_conf:
+  - "{{ sasl_passwd }}"
+  - "/etc/postfix/sasl_passwd.db"

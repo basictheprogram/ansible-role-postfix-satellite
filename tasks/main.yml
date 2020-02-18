@@ -39,3 +39,43 @@
   notify: 
     - newaliases
   tags: postfix-satellite
+
+#- name: remove smtp_fallback_relay
+#  when:
+#    - postfix_conf.smtp_tls is defined 
+#  tags: postfix-satellite
+
+- name: create sasl_passwd
+  template:
+    src: "sasl_passwd.j2"
+    dest: "{{ sasl_passwd }}"
+    owner: "root"
+    group: "root"
+    mode: "0600"
+  when:
+    - postfix_conf.smtp_tls is defined 
+    - postfix_conf.smtp_tls == true
+  notify:
+    - hash sasl_passwd
+    - update ca-certificates
+    - restart postfix
+  tags: postfix-satellite
+
+- name: hash sasl_passwd
+  command: "/usr/sbin/postmap hash:{{ sasl_passwd }}"
+  when:
+    - postfix_conf.smtp_tls is defined 
+    - postfix_conf.smtp_tls == true
+  tags: postfix-satellite
+
+- name: set permissions on sasl_passwd
+  file:
+    path: "{{ item }}"
+    owner: "root"
+    group: "root"
+    mode: "0600"
+  loop: "{{ sasl_conf }}"
+  when:
+    - postfix_conf.smtp_tls is defined 
+    - postfix_conf.smtp_tls == true
+  tags: postfix-satellite 

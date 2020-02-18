@@ -1,0 +1,1 @@
+[{{ postfix_conf.relayhost | default("") }}]:{{ postfix_conf.relayport | default("25") }} {{ aws_ses.username }}:{{ aws_ses.password }}
