@@ -12,7 +12,7 @@
     name: "postfix"
     state: "reloaded"
   tags: postfix-satellite
-    
+
 - name: newaliases
   command: "/usr/bin/newaliases"
   tags: postfix-satellite

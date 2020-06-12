@@ -1,0 +1,24 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+
+  vars:
+    tshock_filename: "TShock4.4.0_Pre11_Terraria1.4.0.5.zip"
+    tshock_download: "https://github.com/Pryaxis/TShock/releases/download/v4.4.0-pre11/TShock4.4.0_Pre11_Terraria1.4.0.5.zip"
+    tshock_sha256sum: "7c2254cb0aefb72b8276a016fa06b108c911a0af42f4b04b43d0d2d0ee31cd4b"
+    teak_motd: true
+
+  pre_tasks:
+    - name: PRE-TASK update apt cache
+      apt:
+        update_cache: true
+        cache_valid_time: 3600
+        force_apt_get: true
+        autoremove: true
+        autoclean: true
+      changed_when: false
+      when: ansible_os_family == 'Debian'
+
+  roles:
+    - role: real_time_com.postfix_satellite

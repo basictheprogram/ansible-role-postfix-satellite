@@ -1,11 +1,12 @@
 ---
 # tasks file for postfix-satellite/debian.yml
-    
+
 - name: install postfix (apt)
   apt:
     name: "{{ postfix_satellite_packages }}"
-    install_recommends: no
-    force_apt_get: yes
-    state: latest
+    state: "present"
+    install_recommends: false
+    update_cache: true
+    cache_valid_time: 3600
+    force_apt_get: true
   tags: postfix-satellite
-  

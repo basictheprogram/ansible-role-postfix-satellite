@@ -17,7 +17,7 @@
 
 - import_tasks: redhat.yml
   when: ansible_os_family == 'RedHat'
-  
+
 - name: install postfix config from template
   template:
     src: "postfix_main_cf.j2"
@@ -36,13 +36,13 @@
     owner: "root"
     group: "root"
     mode: "0644"
-  notify: 
+  notify:
     - newaliases
   tags: postfix-satellite
 
 #- name: remove smtp_fallback_relay
 #  when:
-#    - postfix_conf.smtp_tls is defined 
+#    - postfix_conf.smtp_tls is defined
 #  tags: postfix-satellite
 
 - name: create sasl_passwd
@@ -53,8 +53,8 @@
     group: "root"
     mode: "0600"
   when:
-    - postfix_conf.smtp_tls is defined 
-    - postfix_conf.smtp_tls == true
+    - postfix_conf.smtp_tls is defined
+    - postfix_conf.smtp_tls
   notify:
     - hash sasl_passwd
     - update ca-certificates
@@ -64,8 +64,8 @@
 - name: hash sasl_passwd
   command: "/usr/sbin/postmap hash:{{ sasl_passwd }}"
   when:
-    - postfix_conf.smtp_tls is defined 
-    - postfix_conf.smtp_tls == true
+    - postfix_conf.smtp_tls is defined
+    - postfix_conf.smtp_tls
   tags: postfix-satellite
 
 - name: set permissions on sasl_passwd
@@ -76,6 +76,6 @@
     mode: "0600"
   loop: "{{ sasl_conf }}"
   when:
-    - postfix_conf.smtp_tls is defined 
-    - postfix_conf.smtp_tls == true
-  tags: postfix-satellite 
+    - postfix_conf.smtp_tls is defined
+    - postfix_conf.smtp_tls
+  tags: postfix-satellite

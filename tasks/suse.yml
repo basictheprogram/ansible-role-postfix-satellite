@@ -4,5 +4,5 @@
 - name: install postfix (zypper)
   zypper:
     name: "{{ satellite_packages }}"
-    state: "latest"
+    state: "present"
   tags: postfix
