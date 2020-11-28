@@ -17,10 +17,14 @@
   command: "/usr/bin/newaliases"
   tags: postfix-satellite
 
-- name: hash sasl_passwd
+- name: postmap sasl_passwd
   command: "/usr/sbin/postmap hash:{{ sasl_passwd }}"
   tags: postfix-satellite
 
 - name: update ca-certificates
   command: "/usr/sbin/update-ca-certificates"
+  tags: postfix-satellite
+
+- name: postmap generic
+  command: "/usr/sbin/postmap hash:{{ generic_table }}"
   tags: postfix-satellite

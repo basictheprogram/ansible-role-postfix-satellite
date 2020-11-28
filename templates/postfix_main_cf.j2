@@ -1,4 +1,4 @@
-smtpd_banner = $myhostname ESMTP $mail_name 
+smtpd_banner = $myhostname ESMTP $mail_name
 biff = no
 append_dot_mydomain = no
 readme_directory = no
@@ -37,7 +37,7 @@ smtp_tls_loglevel = 1
 {% if postfix_conf.smtp_sasl is defined %}
 smtp_sasl_auth_enable = yes
 smtp_sasl_security_options = noanonymous
-smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+smtp_sasl_password_maps = hash:{{ sasl_passwd }}
 smtp_use_tls = yes
 smtp_tls_note_starttls_offer = yes
 smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt
@@ -46,6 +46,9 @@ smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt
 smtp_tls_security_level = encrypt
 {% else  %}
 smtp_tls_security_level = may
+{% endif %}
+{% if postfix_conf.generic_table is defined %}
+smtp_generic_maps = hash:{{ generic_table }}
 {% endif %}
 
 {% if ansible_os_family == "Suse" %}

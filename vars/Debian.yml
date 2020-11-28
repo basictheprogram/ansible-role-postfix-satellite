@@ -4,8 +4,9 @@
 postfix_satellite_packages:
   - postfix
 
-sasl_passwd: "/etc/postfix/sasl_passwd"
+generic_table: "/etc/postfix/generic"
+sasl_passwd: "/etc/postfix/sasl/sasl_passwd"
 
 sasl_conf:
   - "{{ sasl_passwd }}"
-  - "/etc/postfix/sasl_passwd.db"
+  - "/etc/postfix/sasl/sasl_passwd.db"

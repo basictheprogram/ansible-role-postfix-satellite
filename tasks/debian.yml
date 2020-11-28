@@ -10,3 +10,7 @@
     cache_valid_time: 3600
     force_apt_get: true
   tags: postfix-satellite
+
+- debug:
+    msg: "{{ postfix_conf.smtp_sasl_auth }}"
+  tags: postfix-satellite

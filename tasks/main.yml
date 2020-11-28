@@ -1,12 +1,17 @@
 ---
 # tasks file for postfix-satellite/main.yml
 
-- name: gather os specific variables
-  include_vars: "{{ item }}"
-  with_first_found:
-    - "{{ ansible_distribution_release }}.yml"
-    - "{{ ansible_distribution }}.yml"
-    - "{{ ansible_os_family }}.yml"
+- name: gather OS specific variables
+  include_vars: "{{ lookup('first_found', params) }}"
+  vars:
+    params:
+      files:
+        - "{{ ansible_distribution_release }}.yml"
+        - "{{ ansible_distribution }}.yml"
+        - "{{ ansible_os_family }}.yml"
+        - "main.yml"
+      paths:
+        - "vars"
   tags: postfix-satellite
 
 - import_tasks: debian.yml
@@ -54,21 +59,22 @@
     mode: "0600"
   when:
     - postfix_conf.smtp_tls is defined
-    - postfix_conf.smtp_tls
+    - postfix_conf.smtp_sasl is defined
   notify:
-    - hash sasl_passwd
+    - postmap sasl_passwd
     - update ca-certificates
     - restart postfix
   tags: postfix-satellite
 
-- name: hash sasl_passwd
+- name: postmap sasl_passwd
   command: "/usr/sbin/postmap hash:{{ sasl_passwd }}"
+  changed_when: false
   when:
     - postfix_conf.smtp_tls is defined
-    - postfix_conf.smtp_tls
+    - postfix_conf.smtp_sasl is defined
   tags: postfix-satellite
 
-- name: set permissions on sasl_passwd
+- name: set permissions on {{ sasl_passwd }}
   file:
     path: "{{ item }}"
     owner: "root"
@@ -77,5 +83,29 @@
   loop: "{{ sasl_conf }}"
   when:
     - postfix_conf.smtp_tls is defined
-    - postfix_conf.smtp_tls
+    - postfix_conf.smtp_sasl is defined
   tags: postfix-satellite
+
+- name: set permissions on /etc/postfix/sasl directory
+  file:
+    path: "/etc/postfix/sasl"
+    owner: "root"
+    group: "root"
+    mode: "0700"
+  when:
+    - postfix_conf.smtp_tls is defined
+    - postfix_conf.smtp_sasl is defined
+  tags: postfix-satellite
+
+- name: create generic table
+  template:
+    src: "generic.j2"
+    dest: "{{ generic_table }}"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  when:
+    - postfix_conf.generic_table is defined
+  notify:
+    - postmap generic
+    - restart postfix

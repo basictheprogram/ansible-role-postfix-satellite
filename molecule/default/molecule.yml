@@ -8,7 +8,7 @@ lint: |
   yamllint .
   ansible-lint
 platforms:
-  - name: ubuntu-20.04
+  - name: instance
     #    groups: ubuntu-20.04
     #      - server
     image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2004}-ansible:latest"

@@ -4,10 +4,36 @@
   become: true
 
   vars:
-    tshock_filename: "TShock4.4.0_Pre11_Terraria1.4.0.5.zip"
-    tshock_download: "https://github.com/Pryaxis/TShock/releases/download/v4.4.0-pre11/TShock4.4.0_Pre11_Terraria1.4.0.5.zip"
-    tshock_sha256sum: "7c2254cb0aefb72b8276a016fa06b108c911a0af42f4b04b43d0d2d0ee31cd4b"
-    teak_motd: true
+    postfix_conf:
+      admin_email: postmaster@localhost
+      myhostname: localhost
+      myorigin: localhost
+      relayhost: relay.localhost
+      relayport: "587"
+      compatibility_level: "2"
+      lmtp_host_lookup: native
+      smtp_host_lookup: native
+      smtp_tls: true
+      smtp_sasl:
+        - username: users1
+          password: password1
+        - username: user2
+          password: password2
+        - username: user3
+          password: password3
+      generic_table:
+        - pattern: "@hostname.domain.com"
+          result: "noreply@domain.com"
+        - pattern: "@domain.com"
+          result: "noreply@domain.com"
+
+    aws_ses:
+      username: "username"
+      password: "passwd"
+
+  environment:
+    TZ: "America/Chicago" # Keep tzdata pacakge happy
+    DEBIAN_FRONTEND: "noninteractive"
 
   pre_tasks:
     - name: PRE-TASK update apt cache
@@ -15,10 +41,8 @@
         update_cache: true
         cache_valid_time: 3600
         force_apt_get: true
-        autoremove: true
-        autoclean: true
       changed_when: false
       when: ansible_os_family == 'Debian'
 
   roles:
-    - role: real_time_com.postfix_satellite
+    - role: real_time_com.postfix-satellite
