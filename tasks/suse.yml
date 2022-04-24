@@ -1,8 +1,0 @@
----
-# tasks file for postfix-satellite/suse.yml
-
-- name: install postfix (zypper)
-  zypper:
-    name: "{{ satellite_packages }}"
-    state: "present"
-  tags: postfix

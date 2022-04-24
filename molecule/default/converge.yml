@@ -1,5 +1,5 @@
 ---
-- name: Converge
+- name: Molecule converge
   hosts: all
   become: true
 
@@ -27,22 +27,11 @@
         - pattern: "@domain.com"
           result: "noreply@domain.com"
 
-    aws_ses:
-      username: "username"
-      password: "passwd"
-
   environment:
-    TZ: "America/Chicago" # Keep tzdata pacakge happy
+    TZ: "America/Chicago"    # Keep tzdata pacakge happy
     DEBIAN_FRONTEND: "noninteractive"
 
   pre_tasks:
-    - name: PRE-TASK update apt cache
-      apt:
-        update_cache: true
-        cache_valid_time: 3600
-        force_apt_get: true
-      changed_when: false
-      when: ansible_os_family == 'Debian'
 
   roles:
-    - role: real_time_com.postfix-satellite
+  # - role: postfix_satellite

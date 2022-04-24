@@ -9,8 +9,6 @@ lint: |
   ansible-lint
 platforms:
   - name: instance
-    #    groups: ubuntu-20.04
-    #      - server
     image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2004}-ansible:latest"
     command: ${MOLECULE_DOCKER_COMMAND:-""}
     volumes:
@@ -21,15 +19,5 @@ provisioner:
   name: ansible
   playbooks:
     converge: ${MOLECULE_PLAYBOOK:-converge.yml}
-#  inventory:
-#    host_vars:
-#      tweak_motd: true
-#scenario:
-#  name: default
 verifier:
-  #  name: testinfra
-  #  lint:
-  #    name: flake8
-  #  options:
-  #    s: true
   name: ansible

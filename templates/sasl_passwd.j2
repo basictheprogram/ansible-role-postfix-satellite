@@ -1,3 +1,3 @@
-{% for item in postfix_conf.smtp_sasl_auth %}
+{% for item in postfix_conf.smtp_sasl %}
 [{{ postfix_conf.relayhost | default("") }}]:{{ postfix_conf.relayport | default("25") }} {{ item.username }}:{{ item.password }}
 {% endfor %}
