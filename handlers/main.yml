@@ -1,30 +1,30 @@
 ---
 # handlers file for roles/postfix-satellite
 
-- name: restart postfix
+- name: Restart postfix
   ansible.builtin.service:
     name: "postfix"
     state: restarted
   tags: postfix-satellite
 
-- name: reload postfix
+- name: Reload postfix
   ansible.builtin.service:
     name: "postfix"
     state: "reloaded"
   tags: postfix-satellite
 
-- name: newaliases
+- name: Newaliases
   ansible.builtin.command: "/usr/bin/newaliases"
   tags: postfix-satellite
 
-- name: postmap sasl_passwd
+- name: Postmap sasl_passwd
   ansible.builtin.command: "/usr/sbin/postmap hash:{{ sasl_passwd }}"
   tags: postfix-satellite
 
-- name: update ca-certificates
+- name: Update ca-certificates
   ansible.builtin.command: "/usr/sbin/update-ca-certificates"
   tags: postfix-satellite
 
-- name: postmap generic
+- name: Postmap generic
   ansible.builtin.command: "/usr/sbin/postmap hash:{{ generic_table }}"
   tags: postfix-satellite

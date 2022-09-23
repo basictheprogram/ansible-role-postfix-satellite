@@ -6,7 +6,7 @@
   vars:
     postfix_conf:
       admin_email: postmaster@localhost
-      myhostname: localhost
+      myhostname: Localhost
       myorigin: localhost
       relayhost: relay.localhost
       relayport: "587"
@@ -15,11 +15,11 @@
       smtp_host_lookup: native
       smtp_tls: true
       smtp_sasl:
-        - username: users1
+        - username: Users1
           password: password1
-        - username: user2
+        - username: User2
           password: password2
-        - username: user3
+        - username: User3
           password: password3
       generic_table:
         - pattern: "@hostname.domain.com"

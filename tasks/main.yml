@@ -1,7 +1,7 @@
 ---
 # tasks file for postfix-satellite/main.yml
 
-- name: gather OS specific variables
+- name: Gather OS specific variables
   ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
   vars:
     params:
@@ -14,11 +14,11 @@
         - "vars"
   tags: postfix-satellite
 
-- name: import debian.yml
+- name: Import debian.yml
   import_tasks: debian.yml
   when: ansible_os_family == 'Debian'
 
-- name: install postfix config from template
+- name: Install postfix config from template
   ansible.builtin.template:
     src: "postfix_main_cf.j2"
     dest: "/etc/postfix/main.cf"
@@ -26,10 +26,10 @@
     group: "root"
     mode: "0644"
   notify:
-    - restart postfix
+    - Restart postfix
   tags: postfix-satellite
 
-- name: configure aliases database
+- name: Configure aliases database
   ansible.builtin.template:
     src: "aliases.j2"
     dest: "/etc/aliases"
@@ -40,7 +40,7 @@
     - newaliases
   tags: postfix-satellite
 
-- name: create sasl_passwd
+- name: Create sasl_passwd
   ansible.builtin.template:
     src: "sasl_passwd.j2"
     dest: "{{ sasl_passwd }}"
@@ -53,10 +53,10 @@
   notify:
     - postmap sasl_passwd
     - update ca-certificates
-    - restart postfix
+    - Restart postfix
   tags: postfix-satellite
 
-- name: postmap sasl_passwd
+- name: Postmap sasl_passwd
   ansible.builtin.command: "/usr/sbin/postmap hash:{{ sasl_passwd }}"
   changed_when: false
   when:
@@ -64,19 +64,21 @@
     - postfix_conf.smtp_sasl is defined
   tags: postfix-satellite
 
-- name: set permissions on {{ sasl_passwd }}
+- name: Set permissions on {{ sasl_passwd }}
   ansible.builtin.file:
-    path: "{{ item }}"
+    path: "{{ postfix_satellite_item }}"
     owner: "root"
     group: "root"
     mode: "0600"
   loop: "{{ sasl_conf }}"
+  loop_control:
+    loop_var: postfix_satellite_item
   when:
     - postfix_conf.smtp_tls is defined
     - postfix_conf.smtp_sasl is defined
   tags: postfix-satellite
 
-- name: set permissions on /etc/postfix/sasl directory
+- name: Set permissions on /etc/postfix/sasl directory
   ansible.builtin.file:
     path: "/etc/postfix/sasl"
     owner: "root"
@@ -87,7 +89,7 @@
     - postfix_conf.smtp_sasl is defined
   tags: postfix-satellite
 
-- name: create generic table
+- name: Create generic table
   ansible.builtin.template:
     src: "generic.j2"
     dest: "{{ generic_table }}"
@@ -98,4 +100,4 @@
     - postfix_conf.generic_table is defined
   notify:
     - postmap generic
-    - restart postfix
+    - Restart postfix
