@@ -1,6 +1,4 @@
 ---
-# tasks file for postfix-satellite/main.yml
-
 - name: Gather OS specific variables
   ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
   vars:
@@ -15,8 +13,12 @@
   tags: postfix-satellite
 
 - name: Import debian.yml
-  import_tasks: debian.yml
+  ansible.builtin.include_tasks: debian.yml
   when: ansible_os_family == 'Debian'
+
+- name: Debug
+  ansible.builtin.debug:
+    msg: "debug: {{ postfix_conf }}"
 
 - name: Install postfix config from template
   ansible.builtin.template:
@@ -37,7 +39,7 @@
     group: "root"
     mode: "0644"
   notify:
-    - newaliases
+    - Newaliases
   tags: postfix-satellite
 
 - name: Create sasl_passwd
@@ -51,8 +53,8 @@
     - postfix_conf.smtp_tls is defined
     - postfix_conf.smtp_sasl is defined
   notify:
-    - postmap sasl_passwd
-    - update ca-certificates
+    - Postmap sasl_passwd
+    - Update ca-certificates
     - Restart postfix
   tags: postfix-satellite
 
@@ -99,5 +101,5 @@
   when:
     - postfix_conf.generic_table is defined
   notify:
-    - postmap generic
+    - Postmap generic
     - Restart postfix

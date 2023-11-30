@@ -1,6 +1,4 @@
 ---
-# tasks file for postfix-satellite/debian.yml
-
 - name: Install postfix (apt)
   ansible.builtin.apt:
     name: "{{ postfix_satellite_packages }}"

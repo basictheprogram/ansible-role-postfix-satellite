@@ -1,6 +1,4 @@
 ---
-# handlers file for roles/postfix-satellite
-
 - name: Restart postfix
   ansible.builtin.service:
     name: "postfix"

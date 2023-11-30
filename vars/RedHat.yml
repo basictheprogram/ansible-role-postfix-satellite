@@ -1,4 +1,2 @@
 ---
-# vars file for roles/postfix-satellite
-
-postfix_satellite_packages:
+postfix_satellite_packages: []
