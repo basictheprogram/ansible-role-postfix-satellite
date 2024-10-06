@@ -10,7 +10,7 @@ myorigin = {{ postfix_conf.myorigin }}
 {% if postfix_conf.mydestination is defined %}
 mydestination = {{ postfix_conf.mydestination }}
 {% else %}
-mydestination = {{ postfix_conf.myhostname }}, localhost
+mydestination = localhost
 {% endif %}
 {% if postfix_conf.relayhost is defined  %}
 relayhost = [{{ postfix_conf.relayhost | default("") }}]:{{ postfix_conf.relayport | default("25") }}

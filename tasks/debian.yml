@@ -8,3 +8,16 @@
     cache_valid_time: 3600
     force_apt_get: true
   tags: postfix-satellite
+
+- name: Install postfix SASL packages (apt)
+  ansible.builtin.apt:
+    name: "{{ postfix_satellite_sasl_packages }}"
+    state: "present"
+    install_recommends: false
+    update_cache: true
+    cache_valid_time: 3600
+    force_apt_get: true
+  when:
+    - postfix_conf is defined
+    - postfix_conf.smtp_sasl is defined
+  tags: postfix-satellite
