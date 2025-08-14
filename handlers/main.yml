@@ -13,16 +13,20 @@
 
 - name: Newaliases
   ansible.builtin.command: "/usr/bin/newaliases"
+  changed_when: false
   tags: postfix-satellite
 
 - name: Postmap sasl_passwd
   ansible.builtin.command: "/usr/sbin/postmap hash:{{ sasl_passwd }}"
+  changed_when: false
   tags: postfix-satellite
 
 - name: Update ca-certificates
   ansible.builtin.command: "/usr/sbin/update-ca-certificates"
+  changed_when: false
   tags: postfix-satellite
 
 - name: Postmap generic
   ansible.builtin.command: "/usr/sbin/postmap hash:{{ generic_table }}"
+  changed_when: false
   tags: postfix-satellite
