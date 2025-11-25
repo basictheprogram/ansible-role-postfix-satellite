@@ -1,12 +1,17 @@
 ---
+- name: Debug OS specific variables
+  ansible.builtin.debug:
+    msg: "{{ ansible_facts['distribution_release'] }}:{{ ansible_facts['distribution'] }}:{{ ansible_facts['os_family'] }}"
+  tags: postfix-satellite
+
 - name: Gather OS specific variables
   ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
   vars:
     params:
       files:
-        - "{{ ansible_distribution_release }}.yml"
-        - "{{ ansible_distribution }}.yml"
-        - "{{ ansible_os_family }}.yml"
+        - "{{ ansible_facts['distribution_release'] }}.yml"
+        - "{{ ansible_facts['distribution'] }}.yml"
+        - "{{ ansible_facts['os_family'] }}.yml"
         - "main.yml"
       paths:
         - "vars"
@@ -14,9 +19,10 @@
 
 - name: Import debian.yml
   ansible.builtin.include_tasks: debian.yml
-  when: ansible_os_family == 'Debian'
+  when: ansible_facts['os_family'] == 'Debian'
+  tags: postfix-satellite
 
-- name: Debug
+- name: Debug postfix_conf
   ansible.builtin.debug:
     msg: "debug: {{ postfix_conf }}"
 
