@@ -58,6 +58,8 @@ repos:
         name: Ansible Lint
         description: Run configurations on .ansible-lint file
         verbose: false
+        env:
+          ANSIBLE_COLLECTIONS_PATH: /workspace/collections
 
   - repo: https://github.com/jumanjihouse/pre-commit-hooks
     rev: 3.0.0
