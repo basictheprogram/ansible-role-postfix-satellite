@@ -14,12 +14,17 @@
         - "{{ ansible_facts['os_family'] }}.yml"
         - "main.yml"
       paths:
-        - "vars"
+        - "defaults"
   tags: postfix-satellite
 
 - name: Import debian.yml
   ansible.builtin.include_tasks: debian.yml
   when: ansible_facts['os_family'] == 'Debian'
+  tags: postfix-satellite
+
+- name: Import_tasks redhat.yml
+  ansible.builtin.include_tasks: redhat.yml
+  when: ansible_facts['os_family'] == 'RedHat'
   tags: postfix-satellite
 
 - name: Debug postfix_conf

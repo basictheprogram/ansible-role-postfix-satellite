@@ -1,2 +1,6 @@
 ---
 postfix_satellite_packages: []
+postfix_satellite_sasl_packages: []
+sasl_conf: []
+# generic_table:
+# sasl_passwd:

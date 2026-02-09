@@ -7,7 +7,7 @@ galaxy_info:
   author: "Bob Tanner"
   description: postfix_satellite
   company: "Real Time Enterprises, Inc."
-  license: license (BSD, MIT)
+  license: "MIT"
   min_ansible_version: "2.12"
   platforms:
     - name: Ubuntu
@@ -23,6 +23,9 @@ galaxy_info:
         - bullseye
         - bookworm
         - trixie
+    - name: EL
+      versions:
+        - "9"
   galaxy_tags:
     - debian
     - linux

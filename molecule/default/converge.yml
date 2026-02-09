@@ -33,5 +33,5 @@
 
   pre_tasks:
 
-  roles:
+  roles: []
   # - role: postfix_satellite

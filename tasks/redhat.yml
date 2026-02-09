@@ -1,0 +1,21 @@
+---
+- name: Install postfix (dnf)
+  ansible.builtin.dnf:
+    name: "{{ postfix_satellite_packages }}"
+    state: "present"
+  tags: postfix-satellite
+
+- name: Install postfix SASL packages (dnf)
+  ansible.builtin.dnf:
+    name: "{{ postfix_satellite_sasl_packages }}"
+    state: "present"
+  when:
+    - postfix_conf is defined
+    - postfix_conf.smtp_sasl is defined
+  tags: postfix-satellite
+
+- name: Set postfix as the system MTA
+  community.general.alternatives:
+    name: mta
+    path: /usr/sbin/sendmail.postfix
+  tags: postfix-satellite

@@ -15,7 +15,7 @@
 
   pre_tasks:
 
-  roles:
+  roles: []
 
   tasks:
     - name: PREPARE update apt cache

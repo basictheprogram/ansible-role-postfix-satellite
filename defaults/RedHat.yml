@@ -1,0 +1,15 @@
+---
+postfix_satellite_packages:
+  - postfix
+  - s-nail
+
+postfix_satellite_sasl_packages:
+  - cyrus-sasl
+  - cyrus-sasl-plain
+
+generic_table: "/etc/postfix/generic"
+sasl_passwd: "/etc/postfix/sasl/sasl_passwd"
+
+sasl_conf:
+  - "{{ sasl_passwd }}"
+  - "/etc/postfix/sasl/sasl_passwd.db"

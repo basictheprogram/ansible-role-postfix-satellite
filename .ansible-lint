@@ -12,3 +12,8 @@ skip_list:
   - "git-latest"
   - "var-naming"
   - "package-latest"
+
+enable_list:
+  - fqcn-builtins
+
+use_default_rules: true

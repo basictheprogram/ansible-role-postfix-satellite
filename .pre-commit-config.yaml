@@ -16,7 +16,7 @@ repos:
         files: requirements.txt|\.gitignore|\.dockerignore
 
   - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.37.1
+    rev: v1.38.0
     hooks:
       - id: yamllint
         files: \.(yaml|yml)$
@@ -24,12 +24,12 @@ repos:
         entry: yamllint --strict -f parsable
 
   - repo: https://github.com/zricethezav/gitleaks
-    rev: v8.29.1
+    rev: v8.30.0
     hooks:
       - id: gitleaks
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.6
+    rev: v0.15.0
     hooks:
       - id: ruff
         name: Ruff check
@@ -51,15 +51,13 @@ repos:
         entry: hadolint
 
   - repo: https://github.com/ansible/ansible-lint
-    rev: v25.11.1
+    rev: v26.1.1
     hooks:
       - id: ansible-lint
         files: \.(yaml|yml)$
         name: Ansible Lint
         description: Run configurations on .ansible-lint file
         verbose: false
-        env:
-          ANSIBLE_COLLECTIONS_PATH: /workspace/collections
 
   - repo: https://github.com/jumanjihouse/pre-commit-hooks
     rev: 3.0.0
@@ -79,6 +77,3 @@ repos:
       # - id: script-must-not-have-extension
       - id: shellcheck
       - id: shfmt
-
-ci:
-  autoupdate_schedule: weekly
