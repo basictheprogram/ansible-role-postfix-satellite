@@ -17,12 +17,12 @@ relayhost = [{{ postfix_conf.relayhost | default("") }}]:{{ postfix_conf.relaypo
 {% else %}
 relayhost =
 {% endif %}
-mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
+mynetworks = 127.0.0.0/8 [::1]/128
 mailbox_size_limit = 0
 recipient_delimiter = +
 inet_interfaces = loopback-only
 inet_protocols = {{ postfix_conf.inet_protocols | default("all") }}
-compatibility_level = {{ postfix_conf.compatibility_level | default("0") }}
+compatibility_level = {{ postfix_conf.compatibility_level | default("3.6") }}
 {% if postfix_conf.lmtp_host_lookup is defined %}
 lmtp_host_lookup = native
 {% endif %}
