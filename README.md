@@ -16,13 +16,12 @@ removed in 3.6 (`tls_random_source`, `smtp_use_tls`).
 | Ubuntu | 22.04 (jammy), 24.04 (noble), 26.04 (resolute) |
 | Debian | 12 (bookworm), 13 (trixie) |
 | RHEL / Rocky / AlmaLinux | 9, 10 |
-| openSUSE Leap | 15 |
 
 ## Requirements
 
-- Ansible >= 2.17
-- Collection: `community.general` (required for openSUSE `zypper` module and
-  the `alternatives` module on RedHat)
+- Ansible >= 2.20
+- Collection: `community.general` (required for the `alternatives` module on
+  RedHat/EL)
 
 Install the collection before running the role:
 

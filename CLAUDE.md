@@ -8,8 +8,8 @@ generic address rewrite table for relaying through a smarthost such
 as Amazon SES, SendGrid, or an internal relay.
 
 The role targets **Postfix 3.6+** and **ansible-core 2.20** across
-Debian/Ubuntu, RedHat/EL, and Suse/openSUSE. It is maintained by
-Real Time Enterprises, Inc.
+Debian/Ubuntu and RedHat/EL. It is maintained by Real Time
+Enterprises, Inc.
 
 ---
 
@@ -108,13 +108,11 @@ vars/
   main.yml           # Commentary only; no global role vars
   Debian.yml         # Package names and file paths for Debian/Ubuntu
   RedHat.yml         # Package names and file paths for RedHat/EL
-  Suse.yml           # Package names and file paths for Suse/openSUSE
 tasks/
   main.yml           # Orchestrator — include_tasks dispatch only
   preflight.yml      # Assertions: OS, postfix_conf shape, SASL rules
   debian.yml         # apt install — base + SASL packages
   redhat.yml         # dnf install + alternatives for system MTA
-  suse.yml           # zypper install
 handlers/
   main.yml           # restart/reload postfix, newaliases, postmap
 templates/
@@ -169,8 +167,8 @@ user-facing config key in `vars/`.
 ## Conventions
 
 * **FQCN everywhere**: `ansible.builtin.*` for core modules,
-  `community.general.*` for zypper and alternatives. The
-  `.ansible-lint` `fqcn-builtins` rule enforces this.
+  `community.general.*` for the `alternatives` module on RedHat/EL.
+  The `.ansible-lint` `fqcn-builtins` rule enforces this.
 * **Tags**: every task carries `tags: postfix-satellite`. The
   preflight include uses `import_tasks` so the tag is inherited
   statically.
@@ -223,11 +221,11 @@ rather than guessing:
 * `verify.yml` contains only a trivial `assert: that: true`. Real
   assertions (postfix is running, main.cf rendered correctly,
   sasl_passwd locked down) have not been written yet.
-* EL 10 and Suse are declared in `meta/main.yml` but have no
-  molecule scenarios. EL/Suse tasks are untested in CI.
+* EL 10 is declared in `meta/main.yml` but has no molecule scenario.
+  RedHat/EL tasks are untested in CI.
 * `update-ca-certificates` in the handler is Debian-specific; EL
-  and Suse use `update-ca-trust`. The handler will fail silently on
-  non-Debian hosts if SASL is configured.
+  uses `update-ca-trust`. The handler will fail silently on EL hosts
+  if SASL is configured.
 
 ## Testing locally
 

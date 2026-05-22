@@ -11,10 +11,10 @@
 - name: "Preflight | Assert supported OS family"
   ansible.builtin.assert:
     that:
-      - ansible_facts['os_family'] in ['Debian', 'RedHat', 'Suse', 'openSUSE Leap']
+      - ansible_facts['os_family'] in ['Debian', 'RedHat']
     fail_msg: >-
       Unsupported OS family '{{ ansible_facts['os_family'] }}'.
-      This role supports Debian, RedHat/EL, and Suse/openSUSE.
+      This role supports Debian/Ubuntu and RedHat/EL.
     success_msg: "OS family '{{ ansible_facts['os_family'] }}' is supported."
   tags: postfix-satellite
 

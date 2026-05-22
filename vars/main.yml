@@ -2,6 +2,6 @@
 # vars file for ansible-role-postfix-satellite
 #
 # OS-specific variables are loaded dynamically in tasks/main.yml via
-# include_vars using first_found over vars/Debian.yml, vars/RedHat.yml,
-# and vars/Suse.yml. There are no global role vars here — see defaults/main.yml
+# include_vars using first_found over vars/Debian.yml and vars/RedHat.yml.
+# There are no global role vars here — see defaults/main.yml
 # for user-overridable defaults.

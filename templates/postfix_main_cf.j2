@@ -48,9 +48,3 @@ smtp_tls_security_level = may
 {% if postfix_conf.generic_table is defined %}
 smtp_generic_maps = hash:{{ generic_table }}
 {% endif %}
-{% if ansible_facts["os_family"] == "Suse" %}
-
-# Suse-specific parameters
-setgid_group = maildrop
-daemon_directory = /usr/lib/postfix
-{% endif %}

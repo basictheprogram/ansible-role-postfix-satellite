@@ -11,7 +11,7 @@ galaxy_info:
     /etc/aliases, and optionally configures SASL authentication and a
     generic address rewrite table for relaying through a smarthost such
     as Amazon SES, SendGrid, or an internal mail relay.
-    Supports Debian/Ubuntu, RedHat/EL, and Suse/openSUSE.
+    Supports Debian/Ubuntu and RedHat/EL.
   company: "Real Time Enterprises, Inc."
   license: "MIT"
   min_ansible_version: "2.20"

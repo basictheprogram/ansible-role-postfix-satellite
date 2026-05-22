@@ -28,11 +28,6 @@
   when: ansible_facts['os_family'] == 'RedHat'
   tags: postfix-satellite
 
-- name: Install postfix packages (Suse/openSUSE)
-  ansible.builtin.include_tasks: suse.yml
-  when: ansible_facts['os_family'] == 'Suse' or ansible_facts['os_family'] == 'openSUSE Leap'
-  tags: postfix-satellite
-
 - name: Deploy postfix main.cf
   ansible.builtin.template:
     src: "postfix_main_cf.j2"
