@@ -1,6 +1,18 @@
 ---
+# defaults file for ansible-role-postfix-satellite
+#
+# postfix_conf is the primary user-supplied dictionary.
+# No defaults are provided here — every value is site-specific.
+# Required keys: myhostname, myorigin, admin_email
+# See README.md for the full variable reference.
+postfix_conf: {}
+
+# Package lists — override if your environment needs additional packages.
+# OS-specific values are defined in vars/<OsFamily>.yml and are
+# automatically loaded; these empty lists are the fallback.
 postfix_satellite_packages: []
 postfix_satellite_sasl_packages: []
+
+# SASL credential file list used to lock down permissions.
+# Populated by vars/<OsFamily>.yml when sasl_passwd is defined.
 sasl_conf: []
-# generic_table:
-# sasl_passwd:

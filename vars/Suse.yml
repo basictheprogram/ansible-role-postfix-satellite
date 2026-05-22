@@ -1,7 +1,9 @@
 ---
+# vars file for ansible-role-postfix-satellite — Suse/openSUSE
+
 postfix_satellite_packages:
   - postfix
-  - s-nail
+  - mailx
 
 postfix_satellite_sasl_packages:
   - cyrus-sasl

@@ -6,32 +6,28 @@
   vars:
     postfix_conf:
       admin_email: postmaster@localhost
-      myhostname: Localhost
+      myhostname: localhost
       myorigin: localhost
       relayhost: relay.localhost
       relayport: "587"
-      compatibility_level: "2"
+      compatibility_level: "3.6"
       lmtp_host_lookup: native
       smtp_host_lookup: native
       smtp_tls: true
       smtp_sasl:
-        - username: Users1
+        - username: user1
           password: password1
-        - username: User2
+        - username: user2
           password: password2
-        - username: User3
-          password: password3
       generic_table:
-        - pattern: "@hostname.domain.com"
-          result: "noreply@domain.com"
-        - pattern: "@domain.com"
-          result: "noreply@domain.com"
+        - pattern: "@hostname.example.com"
+          result: "noreply@example.com"
+        - pattern: "@example.com"
+          result: "noreply@example.com"
 
   environment:
-    TZ: "America/Chicago"    # Keep tzdata pacakge happy
+    TZ: "America/Chicago"
     DEBIAN_FRONTEND: "noninteractive"
 
-  pre_tasks:
-
-  roles: []
-  # - role: postfix_satellite
+  roles:
+    - role: realtime.postfix_satellite

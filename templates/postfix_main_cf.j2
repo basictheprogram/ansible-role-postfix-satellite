@@ -12,8 +12,8 @@ mydestination = {{ postfix_conf.mydestination }}
 {% else %}
 mydestination = localhost
 {% endif %}
-{% if postfix_conf.relayhost is defined  %}
-relayhost = [{{ postfix_conf.relayhost | default("") }}]:{{ postfix_conf.relayport | default("25") }}
+{% if postfix_conf.relayhost is defined %}
+relayhost = [{{ postfix_conf.relayhost }}]:{{ postfix_conf.relayport | default("25") }}
 {% else %}
 relayhost =
 {% endif %}
@@ -31,28 +31,26 @@ smtp_host_lookup = native
 {% endif %}
 {% if postfix_conf.smtp_tls is defined %}
 smtp_tls_session_cache_database = btree:/var/lib/postfix/smtp_scache
-tls_random_source = dev:/dev/urandom
 smtp_tls_loglevel = 1
 {% endif %}
 {% if postfix_conf.smtp_sasl is defined %}
 smtp_sasl_auth_enable = yes
 smtp_sasl_security_options = noanonymous
 smtp_sasl_password_maps = hash:{{ sasl_passwd }}
-smtp_use_tls = yes
 smtp_tls_note_starttls_offer = yes
 smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt
 {% endif %}
 {% if postfix_conf.smtp_sasl is defined %}
 smtp_tls_security_level = encrypt
-{% else  %}
+{% else %}
 smtp_tls_security_level = may
 {% endif %}
 {% if postfix_conf.generic_table is defined %}
 smtp_generic_maps = hash:{{ generic_table }}
 {% endif %}
-
 {% if ansible_facts["os_family"] == "Suse" %}
-# suse specific parameter
+
+# Suse-specific parameters
 setgid_group = maildrop
 daemon_directory = /usr/lib/postfix
 {% endif %}

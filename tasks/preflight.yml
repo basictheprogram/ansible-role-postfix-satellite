@@ -1,0 +1,125 @@
+---
+# Preflight assertions for ansible-role-postfix-satellite.
+# These checks run before any packages are installed or files are changed.
+# A failure here means the caller has misconfigured the role; fix the
+# variable and re-run rather than trying to recover mid-play.
+
+# ---------------------------------------------------------------------------
+# OS family
+# ---------------------------------------------------------------------------
+
+- name: "Preflight | Assert supported OS family"
+  ansible.builtin.assert:
+    that:
+      - ansible_facts['os_family'] in ['Debian', 'RedHat', 'Suse', 'openSUSE Leap']
+    fail_msg: >-
+      Unsupported OS family '{{ ansible_facts['os_family'] }}'.
+      This role supports Debian, RedHat/EL, and Suse/openSUSE.
+    success_msg: "OS family '{{ ansible_facts['os_family'] }}' is supported."
+  tags: postfix-satellite
+
+# ---------------------------------------------------------------------------
+# postfix_conf dictionary — presence and required keys
+# ---------------------------------------------------------------------------
+
+- name: "Preflight | Assert postfix_conf is defined"
+  ansible.builtin.assert:
+    that:
+      - postfix_conf is defined
+      - postfix_conf | length > 0
+    fail_msg: >-
+      'postfix_conf' is undefined or empty.
+      Set it in your host_vars, group_vars, or playbook vars.
+    success_msg: "postfix_conf is defined."
+  tags: postfix-satellite
+
+- name: "Preflight | Assert postfix_conf required keys are present"
+  ansible.builtin.assert:
+    that:
+      - postfix_conf.myhostname is defined
+      - postfix_conf.myhostname | length > 0
+      - postfix_conf.myorigin is defined
+      - postfix_conf.myorigin | length > 0
+      - postfix_conf.admin_email is defined
+      - postfix_conf.admin_email | length > 0
+    fail_msg: >-
+      postfix_conf is missing one or more required keys.
+      Required: myhostname, myorigin, admin_email.
+      Got: {{ postfix_conf.keys() | list }}
+    success_msg: "postfix_conf required keys are present."
+  tags: postfix-satellite
+
+# ---------------------------------------------------------------------------
+# relayhost / relayport
+# ---------------------------------------------------------------------------
+
+- name: "Preflight | Assert relayport is a string when defined"
+  ansible.builtin.assert:
+    that:
+      - postfix_conf.relayport | string == postfix_conf.relayport | string
+      - postfix_conf.relayport | string | int > 0
+      - postfix_conf.relayport | string | int <= 65535
+    fail_msg: >-
+      postfix_conf.relayport must be a valid port number (1–65535).
+      Got: '{{ postfix_conf.relayport }}'
+    success_msg: "relayport '{{ postfix_conf.relayport }}' is valid."
+  when: postfix_conf.relayport is defined
+  tags: postfix-satellite
+
+# ---------------------------------------------------------------------------
+# SASL authentication
+# ---------------------------------------------------------------------------
+
+- name: "Preflight | Assert smtp_tls is set when smtp_sasl is defined"
+  ansible.builtin.assert:
+    that:
+      - postfix_conf.smtp_tls is defined
+    fail_msg: >-
+      postfix_conf.smtp_sasl requires postfix_conf.smtp_tls to also be set.
+      SASL authentication without TLS would send credentials in the clear.
+    success_msg: "smtp_tls is set alongside smtp_sasl."
+  when: postfix_conf.smtp_sasl is defined
+  tags: postfix-satellite
+
+- name: "Preflight | Assert smtp_sasl is a non-empty list"
+  ansible.builtin.assert:
+    that:
+      - postfix_conf.smtp_sasl | type_debug == 'list'
+      - postfix_conf.smtp_sasl | length > 0
+    fail_msg: >-
+      postfix_conf.smtp_sasl must be a non-empty list of credential dicts.
+    success_msg: "smtp_sasl is a non-empty list."
+  when: postfix_conf.smtp_sasl is defined
+  tags: postfix-satellite
+
+- name: "Preflight | Assert each smtp_sasl entry has username and password"
+  ansible.builtin.assert:
+    that:
+      - item.username is defined
+      - item.username | length > 0
+      - item.password is defined
+      - item.password | length > 0
+    fail_msg: >-
+      smtp_sasl entry is missing 'username' or 'password': {{ item }}
+    success_msg: "smtp_sasl entry for '{{ item.username }}' is valid."
+  loop: "{{ postfix_conf.smtp_sasl }}"
+  when: postfix_conf.smtp_sasl is defined
+  tags: postfix-satellite
+
+# ---------------------------------------------------------------------------
+# Generic rewrite table
+# ---------------------------------------------------------------------------
+
+- name: "Preflight | Assert generic_table entries have pattern and result"
+  ansible.builtin.assert:
+    that:
+      - item.pattern is defined
+      - item.pattern | length > 0
+      - item.result is defined
+      - item.result | length > 0
+    fail_msg: >-
+      generic_table entry is missing 'pattern' or 'result': {{ item }}
+    success_msg: "generic_table entry '{{ item.pattern }}' is valid."
+  loop: "{{ postfix_conf.generic_table }}"
+  when: postfix_conf.generic_table is defined
+  tags: postfix-satellite

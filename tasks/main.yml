@@ -1,7 +1,8 @@
 ---
-- name: Debug OS specific variables
-  ansible.builtin.debug:
-    msg: "{{ ansible_facts['distribution_release'] }}:{{ ansible_facts['distribution'] }}:{{ ansible_facts['os_family'] }}"
+# tasks file for ansible-role-postfix-satellite
+
+- name: Preflight checks
+  ansible.builtin.import_tasks: preflight.yml
   tags: postfix-satellite
 
 - name: Gather OS specific variables
@@ -14,24 +15,25 @@
         - "{{ ansible_facts['os_family'] }}.yml"
         - "main.yml"
       paths:
-        - "defaults"
+        - "vars"
   tags: postfix-satellite
 
-- name: Import debian.yml
+- name: Install postfix packages (Debian/Ubuntu)
   ansible.builtin.include_tasks: debian.yml
   when: ansible_facts['os_family'] == 'Debian'
   tags: postfix-satellite
 
-- name: Import_tasks redhat.yml
+- name: Install postfix packages (RedHat/EL)
   ansible.builtin.include_tasks: redhat.yml
   when: ansible_facts['os_family'] == 'RedHat'
   tags: postfix-satellite
 
-- name: Debug postfix_conf
-  ansible.builtin.debug:
-    msg: "debug: {{ postfix_conf }}"
+- name: Install postfix packages (Suse/openSUSE)
+  ansible.builtin.include_tasks: suse.yml
+  when: ansible_facts['os_family'] == 'Suse' or ansible_facts['os_family'] == 'openSUSE Leap'
+  tags: postfix-satellite
 
-- name: Install postfix config from template
+- name: Deploy postfix main.cf
   ansible.builtin.template:
     src: "postfix_main_cf.j2"
     dest: "/etc/postfix/main.cf"
@@ -53,7 +55,7 @@
     - Newaliases
   tags: postfix-satellite
 
-- name: Create sasl_passwd
+- name: Deploy SASL password map
   ansible.builtin.template:
     src: "sasl_passwd.j2"
     dest: "{{ sasl_passwd }}"
@@ -69,7 +71,7 @@
     - Restart postfix
   tags: postfix-satellite
 
-- name: Postmap sasl_passwd
+- name: Run postmap on SASL password map
   ansible.builtin.command: "/usr/sbin/postmap hash:{{ sasl_passwd }}"
   changed_when: false
   when:
@@ -77,7 +79,7 @@
     - postfix_conf.smtp_sasl is defined
   tags: postfix-satellite
 
-- name: Set permissions on {{ sasl_passwd }}
+- name: Secure SASL credential files
   ansible.builtin.file:
     path: "{{ postfix_satellite_item }}"
     owner: "root"
@@ -91,7 +93,7 @@
     - postfix_conf.smtp_sasl is defined
   tags: postfix-satellite
 
-- name: Set permissions on /etc/postfix/sasl directory
+- name: Secure /etc/postfix/sasl directory
   ansible.builtin.file:
     path: "/etc/postfix/sasl"
     owner: "root"
@@ -102,7 +104,7 @@
     - postfix_conf.smtp_sasl is defined
   tags: postfix-satellite
 
-- name: Create generic table
+- name: Deploy generic address rewrite table
   ansible.builtin.template:
     src: "generic.j2"
     dest: "{{ generic_table }}"
@@ -114,3 +116,17 @@
   notify:
     - Postmap generic
     - Restart postfix
+  tags: postfix-satellite
+
+- name: Fix postfix chroot jail ownership and permissions
+  ansible.builtin.command: "/usr/sbin/postfix set-permissions"
+  changed_when: false
+  tags: postfix-satellite
+
+- name: Ensure /var/spool/postfix/etc/resolv.conf is owned by root
+  ansible.builtin.file:
+    path: "/var/spool/postfix/etc/resolv.conf"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  tags: postfix-satellite

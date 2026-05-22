@@ -1,4 +1,0 @@
----
-postfix_satellite_packages:
-  - postfix
-  - mailx

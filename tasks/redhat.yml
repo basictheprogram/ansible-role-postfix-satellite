@@ -1,4 +1,6 @@
 ---
+# tasks file for ansible-role-postfix-satellite — RedHat/EL
+
 - name: Install postfix (dnf)
   ansible.builtin.dnf:
     name: "{{ postfix_satellite_packages }}"

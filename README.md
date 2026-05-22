@@ -1,41 +1,172 @@
-# Role Name #
-A brief description of the role goes here.
+# ansible-role-postfix-satellite
 
-# Requirements #
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+Configures Postfix as a **satellite (relay-only)** mail system. The role installs
+Postfix, deploys `/etc/postfix/main.cf` from a template, manages `/etc/aliases`,
+and optionally configures SASL authentication and a generic address rewrite table
+for relaying through a smarthost such as Amazon SES, SendGrid, or an internal mail
+relay.
 
-# Role Variables #
+Targets **Postfix 3.6+**. The generated configuration does not use any parameters
+removed in 3.6 (`tls_random_source`, `smtp_use_tls`).
+
+## Supported Platforms
+
+| OS | Versions |
+|----|----------|
+| Ubuntu | 22.04 (jammy), 24.04 (noble), 26.04 (resolute) |
+| Debian | 12 (bookworm), 13 (trixie) |
+| RHEL / Rocky / AlmaLinux | 9, 10 |
+| openSUSE Leap | 15 |
+
+## Requirements
+
+- Ansible >= 2.17
+- Collection: `community.general` (required for openSUSE `zypper` module and
+  the `alternatives` module on RedHat)
+
+Install the collection before running the role:
+
+```bash
+ansible-galaxy collection install community.general
 ```
-admin_email: ""
-postfix_myhostname: ""
-postfix_relayhost: ""
+
+## Role Variables
+
+### Required
+
+All Postfix configuration is supplied through the `postfix_conf` dictionary.
+The following keys are always required:
+
+| Key | Description |
+|-----|-------------|
+| `postfix_conf.myhostname` | The FQDN of this host (`myhostname` in main.cf) |
+| `postfix_conf.myorigin` | The domain appended to unqualified addresses |
+| `postfix_conf.admin_email` | Destination for postmaster/root/daemon aliases |
+
+### Optional keys in `postfix_conf`
+
+| Key | Default | Description |
+|-----|---------|-------------|
+| `relayhost` | — | Smarthost FQDN. Omit to send directly. |
+| `relayport` | `25` | Port for the smarthost connection |
+| `mydestination` | `localhost` | Domains delivered locally (satellite roles typically leave this minimal) |
+| `inet_protocols` | `all` | `ipv4`, `ipv6`, or `all` |
+| `compatibility_level` | `3.6` | Postfix compatibility level |
+| `lmtp_host_lookup` | — | Set any value to enable `lmtp_host_lookup = native` |
+| `smtp_host_lookup` | — | Set any value to enable `smtp_host_lookup = native` |
+| `smtp_tls` | — | Set any truthy value to enable TLS for outbound delivery |
+| `smtp_sasl` | — | List of SASL credentials (see below). Implicitly enables TLS. |
+| `generic_table` | — | List of address rewrite rules (see below) |
+
+### SASL authentication (`postfix_conf.smtp_sasl`)
+
+Provide a list of credentials. When this key is present, SASL auth is enabled,
+`smtp_tls_security_level` is set to `encrypt`, and a `sasl_passwd` map is
+deployed and postmap'd.
+
+```yaml
+postfix_conf:
+  smtp_sasl:
+    - username: "AKIAIOSFODNN7EXAMPLE"
+      password: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
 ```
 
-# Dependencies #
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+### Generic address rewrite table (`postfix_conf.generic_table`)
 
-# Example Playbook #
-````
+Rewrites envelope sender addresses before delivery. Each entry needs a `pattern`
+and a `result`:
+
+```yaml
+postfix_conf:
+  generic_table:
+    - pattern: "@internal.example.com"
+      result: "noreply@example.com"
+```
+
+### Package variables (defined in `vars/<OsFamily>.yml`)
+
+These are internal role variables set per OS family. Override them in your
+inventory only if your environment requires non-standard packages.
+
+| Variable | Description |
+|----------|-------------|
+| `postfix_satellite_packages` | Base Postfix packages to install |
+| `postfix_satellite_sasl_packages` | SASL library packages (installed only when `smtp_sasl` is defined) |
+| `generic_table` | Path to the generic rewrite table |
+| `sasl_passwd` | Path to the SASL password map |
+| `sasl_conf` | List of SASL files to lock down to mode 0600 |
+
+## Example Playbooks
+
+### Minimal — relay without authentication
+
+```yaml
 - hosts: servers
+  become: true
+  vars:
+    postfix_conf:
+      admin_email: ops@example.com
+      myhostname: "{{ inventory_hostname }}"
+      myorigin: example.com
+      relayhost: smtp.example.com
+      relayport: "25"
   roles:
-     - { role: postfix-satellite, become: yes }
+    - role: realtime.postfix_satellite
 ```
 
-# Amazon SES
-  *  To send production email through Amazon SES, you can use the Simple Mail Transfer Protocol (SMTP) [interface](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/send-email-smtp.html) or the Amazon SES API.
-  * To set up a [STARTTLS](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/smtp-connect.html) connection, the SMTP client connects to the Amazon SES SMTP endpoint on port 25, 587, or 2587
-  * Getting SES [credentials](https://docs.aws.amazon.com/en_pv/ses/latest/DeveloperGuide/smtp-credentials.html)
-  * Configure [postfix](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/postfix.html)
-  *  Before you can send email using Amazon SES, you have to [verify](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/regions.html)] that you own the email address or domain that you plan to send from.
-  * Verify your [addresses and domains](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/verify-addresses-and-domains.html)
-  * Verify your [domain](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/verify-domain-procedure.html)
-  * Configure [DKIM](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/easy-dkim.html)
-  * Configure [MAIL FROM](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/mail-from.html)
-  * To help [prevent](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/request-production-access.html) fraud and abuse, and to help protect your reputation as a sender, we apply certain restrictions to new Amazon SES accounts.
+### Full — relay through Amazon SES with SASL and address rewriting
 
-# License #
-BSD
+```yaml
+- hosts: servers
+  become: true
+  vars:
+    postfix_conf:
+      admin_email: ops@example.com
+      myhostname: "{{ inventory_hostname }}"
+      myorigin: example.com
+      relayhost: email-smtp.us-east-1.amazonaws.com
+      relayport: "587"
+      compatibility_level: "3.6"
+      smtp_tls: true
+      smtp_sasl:
+        - username: "{{ ses_smtp_username }}"
+          password: "{{ ses_smtp_password }}"
+      generic_table:
+        - pattern: "@internal.example.com"
+          result: "noreply@example.com"
+  roles:
+    - role: realtime.postfix_satellite
+```
 
-# Author Information #
-[Real Time Enterprises Inc.](http://www.real-time.com),
-[Bob Tanner](https://github.com/basictheprogram)
+## Amazon SES Notes
+
+- Use the SES SMTP interface on port 587 (STARTTLS).
+- Generate SMTP credentials from the SES console (IAM-based; **not** your AWS
+  access key). See the
+  [SES SMTP credentials guide](https://docs.aws.amazon.com/ses/latest/dg/smtp-credentials.html).
+- Verify your sending domain and configure DKIM before moving out of the SES
+  sandbox.
+- The `generic_table` rewrite is useful to ensure all outbound mail presents a
+  verified From address.
+
+## Testing
+
+Tests use [Molecule](https://ansible.readthedocs.io/projects/molecule/) with
+Docker.
+
+```bash
+# Default scenario (Ubuntu 22.04)
+molecule test
+
+# Test against a different distro
+MOLECULE_DISTRO=debian12 molecule test
+```
+
+## License
+
+MIT
+
+## Author
+
+[Bob Tanner](https://github.com/basictheprogram) —
+[Real Time Enterprises Inc.](https://www.real-time.com)

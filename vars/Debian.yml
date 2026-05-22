@@ -1,0 +1,17 @@
+---
+# vars file for ansible-role-postfix-satellite — Debian/Ubuntu
+
+postfix_satellite_packages:
+  - postfix
+
+postfix_satellite_sasl_packages:
+  - libsasl2-2
+  - libsasl2-modules
+  - libsasl2-modules-db
+
+generic_table: "/etc/postfix/generic"
+sasl_passwd: "/etc/postfix/sasl/sasl_passwd"
+
+sasl_conf:
+  - "{{ sasl_passwd }}"
+  - "/etc/postfix/sasl/sasl_passwd.db"

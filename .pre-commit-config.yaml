@@ -29,7 +29,7 @@ repos:
       - id: gitleaks
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.0
+    rev: v0.15.14
     hooks:
       - id: ruff
         name: Ruff check
@@ -51,7 +51,7 @@ repos:
         entry: hadolint
 
   - repo: https://github.com/ansible/ansible-lint
-    rev: v26.1.1
+    rev: v26.4.0
     hooks:
       - id: ansible-lint
         files: \.(yaml|yml)$

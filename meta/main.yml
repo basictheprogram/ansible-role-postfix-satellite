@@ -5,28 +5,37 @@ galaxy_info:
   namespace: realtime
   role_name: postfix_satellite
   author: "Bob Tanner"
-  description: postfix_satellite
+  description: >
+    Configures Postfix as a satellite (relay-only) mail system.
+    The role installs Postfix, deploys main.cf from a template, manages
+    /etc/aliases, and optionally configures SASL authentication and a
+    generic address rewrite table for relaying through a smarthost such
+    as Amazon SES, SendGrid, or an internal mail relay.
+    Supports Debian/Ubuntu, RedHat/EL, and Suse/openSUSE.
   company: "Real Time Enterprises, Inc."
   license: "MIT"
-  min_ansible_version: "2.12"
+  min_ansible_version: "2.20"
   platforms:
     - name: Ubuntu
       versions:
-        - trusty
-        - xenial
-        - bionic
-        - focal
         - jammy
         - noble
+        - resolute
     - name: Debian
       versions:
-        - bullseye
         - bookworm
         - trixie
     - name: EL
       versions:
         - "9"
+        - "10"
   galaxy_tags:
     - debian
+    - email
     - linux
+    - mail
+    - postfix
+    - relay
+    - satellite
+    - smtp
     - ubuntu
