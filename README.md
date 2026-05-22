@@ -1,5 +1,10 @@
 # ansible-role-postfix-satellite
 
+[![Ansible Galaxy](https://img.shields.io/badge/ansible--galaxy-realtime.postfix__satellite-blue)](https://galaxy.ansible.com/ui/standalone/roles/realtime/postfix_satellite/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow)](https://opensource.org/licenses/MIT)
+[![Ansible Version](https://img.shields.io/badge/ansible--core-%3E%3D2.20-red)](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
+[![GitHub last commit](https://img.shields.io/github/last-commit/basictheprogram/ansible-role-postfix-satellite)](https://github.com/basictheprogram/ansible-role-postfix-satellite/commits/master)
+
 Configures Postfix as a **satellite (relay-only)** mail system. The role installs
 Postfix, deploys `/etc/postfix/main.cf` from a template, manages `/etc/aliases`,
 and optionally configures SASL authentication and a generic address rewrite table
