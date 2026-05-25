@@ -116,6 +116,9 @@
 - name: Fix postfix chroot jail ownership and permissions
   ansible.builtin.command: "/usr/sbin/postfix set-permissions"
   changed_when: false
+  failed_when:
+    - rc != 0
+    - "'No such file or directory' not in stderr"
   tags: postfix-satellite
 
 - name: Ensure /var/spool/postfix/etc/resolv.conf is owned by root
