@@ -241,16 +241,13 @@ molecule verify
 molecule test
 ```
 
-The default molecule scenario uses
-`geerlingguy/docker-ubuntu2004-ansible` (or `MOLECULE_DISTRO` env
-override). The `prepare.yml` playbook updates the apt cache and
-installs a minimal set of base packages before converge runs.
-
-To test against a different distro:
-
-```bash
-MOLECULE_DISTRO=debian12 molecule test
-```
+The default molecule scenario runs a fixed 6-platform matrix —
+Ubuntu 22.04/24.04/26.04, Debian 13, and EL 9/10 (represented by the
+`rockylinux9`/`rockylinux10` images, since no generic EL geerlingguy
+image exists). `molecule test` exercises all six in one invocation;
+there is no `MOLECULE_DISTRO` override anymore. The `prepare.yml`
+playbook updates the apt cache and installs a minimal set of base
+packages before converge runs.
 
 ---
 

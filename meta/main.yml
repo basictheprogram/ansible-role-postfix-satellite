@@ -11,31 +11,21 @@ galaxy_info:
     /etc/aliases, and optionally configures SASL authentication and a
     generic address rewrite table for relaying through a smarthost such
     as Amazon SES, SendGrid, or an internal mail relay.
-    Supports Debian/Ubuntu and RedHat/EL.
+    Supports Ubuntu (jammy, noble, resolute), Debian (trixie), and
+    RedHat/EL (9, 10).
   company: "Real Time Enterprises, Inc."
   license: "MIT"
   min_ansible_version: "2.20"
-  platforms:
-    - name: Ubuntu
-      versions:
-        - jammy
-        - noble
-        - resolute
-    - name: Debian
-      versions:
-        - bookworm
-        - trixie
-    - name: EL
-      versions:
-        - "9"
-        - "10"
+  issue_tracker_url: "https://github.com/basictheprogram/ansible-role-postfix-satellite/issues"
   galaxy_tags:
     - debian
     - email
     - linux
     - mail
     - postfix
+    - redhat
     - relay
+    - sasl
     - satellite
     - smtp
     - ubuntu

@@ -26,6 +26,13 @@
 - name: Update ca-certificates
   ansible.builtin.command: "/usr/sbin/update-ca-certificates"
   changed_when: false
+  when: ansible_facts['os_family'] == 'Debian'
+  tags: postfix-satellite
+
+- name: Update ca-certificates
+  ansible.builtin.command: "update-ca-trust extract"
+  changed_when: false
+  when: ansible_facts['os_family'] == 'RedHat'
   tags: postfix-satellite
 
 - name: Postmap generic

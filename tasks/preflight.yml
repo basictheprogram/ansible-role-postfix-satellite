@@ -5,6 +5,21 @@
 # variable and re-run rather than trying to recover mid-play.
 
 # ---------------------------------------------------------------------------
+# ansible-core version
+# ---------------------------------------------------------------------------
+
+- name: "Preflight | Assert minimum ansible-core version"
+  ansible.builtin.assert:
+    that:
+      - ansible_version.full is version('2.20', '>=')
+    fail_msg: >-
+      ansible-role-postfix-satellite requires ansible-core 2.20 or newer.
+      Running {{ ansible_version.full }}.
+    success_msg: "ansible-core {{ ansible_version.full }} meets the minimum."
+    quiet: true
+  tags: postfix-satellite
+
+# ---------------------------------------------------------------------------
 # OS family
 # ---------------------------------------------------------------------------
 
@@ -16,6 +31,7 @@
       Unsupported OS family '{{ ansible_facts['os_family'] }}'.
       This role supports Debian/Ubuntu and RedHat/EL.
     success_msg: "OS family '{{ ansible_facts['os_family'] }}' is supported."
+    quiet: true
   tags: postfix-satellite
 
 # ---------------------------------------------------------------------------
@@ -31,6 +47,7 @@
       'postfix_conf' is undefined or empty.
       Set it in your host_vars, group_vars, or playbook vars.
     success_msg: "postfix_conf is defined."
+    quiet: true
   tags: postfix-satellite
 
 - name: "Preflight | Assert postfix_conf required keys are present"
@@ -47,6 +64,7 @@
       Required: myhostname, myorigin, admin_email.
       Got: {{ postfix_conf.keys() | list }}
     success_msg: "postfix_conf required keys are present."
+    quiet: true
   tags: postfix-satellite
 
 # ---------------------------------------------------------------------------
@@ -63,6 +81,7 @@
       postfix_conf.relayport must be a valid port number (1–65535).
       Got: '{{ postfix_conf.relayport }}'
     success_msg: "relayport '{{ postfix_conf.relayport }}' is valid."
+    quiet: true
   when: postfix_conf.relayport is defined
   tags: postfix-satellite
 
@@ -78,6 +97,7 @@
       postfix_conf.smtp_sasl requires postfix_conf.smtp_tls to also be set.
       SASL authentication without TLS would send credentials in the clear.
     success_msg: "smtp_tls is set alongside smtp_sasl."
+    quiet: true
   when: postfix_conf.smtp_sasl is defined
   tags: postfix-satellite
 
@@ -89,6 +109,7 @@
     fail_msg: >-
       postfix_conf.smtp_sasl must be a non-empty list of credential dicts.
     success_msg: "smtp_sasl is a non-empty list."
+    quiet: true
   when: postfix_conf.smtp_sasl is defined
   tags: postfix-satellite
 
@@ -100,10 +121,14 @@
       - item.password is defined
       - item.password | length > 0
     fail_msg: >-
-      smtp_sasl entry is missing 'username' or 'password': {{ item }}
+      smtp_sasl entry is missing 'username' or 'password' for
+      username '{{ item.username | default("(unnamed)") }}'.
     success_msg: "smtp_sasl entry for '{{ item.username }}' is valid."
   loop: "{{ postfix_conf.smtp_sasl }}"
+  loop_control:
+    label: "{{ item.username | default('(unnamed)') }}"
   when: postfix_conf.smtp_sasl is defined
+  no_log: true
   tags: postfix-satellite
 
 # ---------------------------------------------------------------------------
@@ -120,6 +145,9 @@
     fail_msg: >-
       generic_table entry is missing 'pattern' or 'result': {{ item }}
     success_msg: "generic_table entry '{{ item.pattern }}' is valid."
+    quiet: true
   loop: "{{ postfix_conf.generic_table }}"
+  loop_control:
+    label: "{{ item.pattern | default('(unnamed)') }}"
   when: postfix_conf.generic_table is defined
   tags: postfix-satellite

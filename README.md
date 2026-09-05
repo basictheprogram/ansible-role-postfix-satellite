@@ -19,22 +19,31 @@ removed in 3.6 (`tls_random_source`, `smtp_use_tls`).
 | OS | Versions |
 |----|----------|
 | Ubuntu | 22.04 (jammy), 24.04 (noble), 26.04 (resolute) |
-| Debian | 12 (bookworm), 13 (trixie) |
+| Debian | 13 (trixie) |
 | RHEL / Rocky / AlmaLinux | 9, 10 |
 
 ## Requirements
 
 - Ansible >= 2.20
 - Collection: `community.general` (required for the `alternatives` module on
-  RedHat/EL)
+  RedHat/EL), declared in `requirements.yml`
 
-Install the collection before running the role:
+Install it before running the role:
 
 ```bash
-ansible-galaxy collection install community.general
+ansible-galaxy collection install -r requirements.yml
 ```
 
 ## Role Variables
+
+### Top-level defaults (`defaults/main.yml`)
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `postfix_conf` | `{}` | Main configuration dict — see below |
+| `postfix_satellite_packages` | `[]` | Base package list override |
+| `postfix_satellite_sasl_packages` | `[]` | SASL package list override |
+| `sasl_conf` | `[]` | Files locked to mode 0600 (populated by `vars/<OsFamily>.yml`) |
 
 ### Required
 
@@ -100,6 +109,27 @@ inventory only if your environment requires non-standard packages.
 | `sasl_passwd` | Path to the SASL password map |
 | `sasl_conf` | List of SASL files to lock down to mode 0600 |
 
+## Task Flow
+
+1. **Preflight** — fails fast before touching the host if:
+   - ansible-core is older than 2.20
+   - the OS family isn't Debian or RedHat
+   - `postfix_conf` is undefined, empty, or missing a required key
+   - `relayport` is set but isn't a valid port number
+   - `smtp_sasl` is set without `smtp_tls`, or an entry is missing
+     `username`/`password`
+   - a `generic_table` entry is missing `pattern` or `result`
+2. Gather OS-specific variables from `vars/<OsFamily>.yml`
+3. Install Postfix (and SASL packages, if `smtp_sasl` is set)
+4. Deploy `/etc/postfix/main.cf` (restarts Postfix)
+5. Configure `/etc/aliases` (runs `newaliases`)
+6. Deploy and postmap the SASL password map, and lock down its
+   permissions (only if `smtp_sasl` is set)
+7. Deploy the generic address rewrite table (only if `generic_table`
+   is set)
+8. Fix chroot jail ownership/permissions — runs on every play, not
+   gated by any variable
+
 ## Example Playbooks
 
 ### Minimal — relay without authentication
@@ -156,14 +186,17 @@ inventory only if your environment requires non-standard packages.
 ## Testing
 
 Tests use [Molecule](https://ansible.readthedocs.io/projects/molecule/) with
-Docker.
+Docker, against a fixed platform matrix — Ubuntu 22.04/24.04/26.04, Debian 13,
+and EL 9/10 (represented by the `rockylinux9`/`rockylinux10` images, since no
+generic EL geerlingguy image exists).
 
 ```bash
-# Default scenario (Ubuntu 22.04)
-molecule test
+# Fast iteration on a single scenario run
+molecule converge
+molecule verify
 
-# Test against a different distro
-MOLECULE_DISTRO=debian12 molecule test
+# Full exercise across all platforms in the matrix
+molecule test
 ```
 
 ## License
