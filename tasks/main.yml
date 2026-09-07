@@ -122,9 +122,11 @@
     - "'No such file or directory' not in _postfix_set_permissions.stderr"
   tags: postfix-satellite
 
-- name: Ensure /var/spool/postfix/etc/resolv.conf is owned by root
-  ansible.builtin.file:
-    path: "/var/spool/postfix/etc/resolv.conf"
+- name: Copy /etc/resolv.conf into the postfix chroot jail
+  ansible.builtin.copy:
+    src: "/etc/resolv.conf"
+    dest: "/var/spool/postfix/etc/resolv.conf"
+    remote_src: true
     owner: "root"
     group: "root"
     mode: "0644"
